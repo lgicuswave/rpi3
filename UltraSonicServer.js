@@ -7,6 +7,22 @@ var http = require('http').Server(app);
 var io = require('socket.io')(http);
 var wpi = require('wiring-pi');
 
+var sp = require("serialport");
+var serialPort = new sp('/dev/ttyACM0', {
+		baudrate: 9600,
+		parser: sp.parsers.readline("\n")
+});
+
+serialPort.on("open", function () {
+    console.log('open');
+});
+
+serialPort.on('data', function(data) {
+    //console.log('data received: ' + data.toString());    
+	//console.log('input data' + input);
+	io.emit('sensor message', data.toString());
+});
+
 var led_pin = 25;
 var btn_pin = 29;
 var sensor_pin = 26;
